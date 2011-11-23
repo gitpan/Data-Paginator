@@ -1,10 +1,14 @@
 package Data::Paginator;
+{
+  $Data::Paginator::VERSION = '0.05';
+}
 use Moose;
+
+# ABSTRACT: Pagination with Moose
 
 use Data::Paginator::Types qw(PositiveInt);
 use MooseX::Types::Moose qw(Maybe);
 
-our $VERSION = '0.04';
 
 has current_page => (
     is => 'ro',
@@ -18,11 +22,13 @@ has current_set => (
     lazy_build => 1
 );
 
+
 has entries_per_page => (
     is => 'ro',
     isa => PositiveInt,
     required => 1
 );
+
 
 has last_page => (
     is => 'ro',
@@ -30,11 +36,13 @@ has last_page => (
     lazy_build => 1
 );
 
+
 has next_set => (
     is => 'ro',
     isa => Maybe[PositiveInt],
     lazy_build => 1
 );
+
 
 has pages_per_set => (
     is => 'ro',
@@ -42,11 +50,13 @@ has pages_per_set => (
     predicate => 'has_pages_per_set'
 );
 
+
 has previous_set => (
     is => 'ro',
     isa => Maybe[PositiveInt],
     lazy_build => 1
 );
+
 
 has total_entries => (
     is => 'ro',
@@ -58,15 +68,16 @@ has total_entries => (
 around 'current_page' => sub {
     my ($orig, $self) = @_;
 
-    my $val = $self->meta->find_attribute_by_name('current_page')->get_value($self);
+    my $attr = $self->meta->find_attribute_by_name('current_page');
+    my $val = $attr->get_value($self);
     if(!defined($val)) {
-        $self->meta->get_attribute('current_page')->set_value($self, 1);
+        $attr->set_value($self, 1);
         return 1
     } elsif($val < 1) {
-        $self->meta->get_attribute('current_page')->set_value($self, 1);
+        $attr->set_value($self, 1);
         return 1;
     } elsif($val > $self->last_page) {
-        $self->meta->get_attribute('current_page')->set_value($self, $self->last_page);
+        $attr->set_value($self, $self->last_page);
         return $self->last_page;
     }
 
@@ -115,6 +126,7 @@ sub _build_previous_set {
     return ($cset - 2) * $self->pages_per_set * $self->entries_per_page + 1;
 }
 
+
 sub entries_on_this_page {
     my ($self) = @_;
 
@@ -124,6 +136,7 @@ sub entries_on_this_page {
         return $self->last - $self->first + 1;
     }
 }
+
 
 sub first {
     my ($self) = @_;
@@ -135,10 +148,12 @@ sub first {
     }
 }
 
+
 sub first_page {
     my ($self) = @_;
     return 1;
 }
+
 
 sub first_set {
     my ($self) = @_;
@@ -150,6 +165,7 @@ sub first_set {
     return undef;
 }
 
+
 sub last {
     my $self = shift;
 
@@ -160,11 +176,13 @@ sub last {
     }
 }
 
+
 sub next_page {
     my $self = shift;
 
     $self->current_page < $self->last_page ? $self->current_page + 1 : undef;
 }
+
 
 sub page_for {
     my ($self, $num) = @_;
@@ -179,6 +197,7 @@ sub page_for {
     return $page;
 }
 
+
 sub previous_page {
     my ($self) = @_;
 
@@ -188,6 +207,7 @@ sub previous_page {
         return undef;
     }
 }
+
 
 sub set_for {
     my ($self, $num) = @_;
@@ -210,6 +230,7 @@ sub skipped {
     return $skipped;
 }
 
+
 sub splice {
     my ($self, $array) = @_;
 
@@ -218,11 +239,18 @@ sub splice {
     return @{$array}[ $self->first - 1 .. $top - 1 ];
 }
 
+
 1;
+__END__
+=pod
 
 =head1 NAME
 
 Data::Paginator - Pagination with Moose
+
+=head1 VERSION
+
+version 0.05
 
 =head1 SYNOPSIS
 
@@ -230,14 +258,14 @@ Data::Paginator - Pagination with Moose
 
     my $pager = Data::Paginator->new(
         current_page => 1,
-        entries_per_page => 10
+        entries_per_page => 10,
         total_entries => 100,
     );
 
-    print "First page: ".$page->first_page."\n";
-    print "Last page: ".$page->last_page."\n";
-    print "First entry on page: ".$page->first."\n";
-    print "Last entry on page: ".$page->last."\n";
+    print "First page: ".$pager->first_page."\n";
+    print "Last page: ".$pager->last_page."\n";
+    print "First entry on page: ".$pager->first."\n";
+    print "Last entry on page: ".$pager->last."\n";
 
 =head1 DESCRIPTION
 
@@ -273,6 +301,10 @@ The number of entries per page, required at instantiation.
 
 Returns the number of the last page.  Lazily computed, so do not set.
 
+=head2 next_set
+
+Returns the number of the next set or undefined if there is no next.
+
 =head2 pages_per_set
 
 If you have a large number of pages to show and would like to allow the user
@@ -280,16 +312,15 @@ to 'jump' X pages at a time, you can set the C<pages_per_set> attribute to X
 and populate the links in your pagination control with the values from
 C<previous_set> and C<next_set>.
 
+=head2 previous_set
+
+Returns the set number of the previous set or undefined if there is no
+previous set.
+
 =head2 total_entries
 
 The total number of entries this pager is covering.  Required at
 instantiation.
-
-=head1 METHODS
-
-=head2 entries_on_this_page
-
-Returns the number of entries on this page.
 
 =head2 first
 
@@ -299,6 +330,12 @@ Returns the number of the first entry on the current page.
 
 Always returns 1.
 
+=head1 METHODS
+
+=head2 entries_on_this_page
+
+Returns the number of entries on this page.
+
 =head2 first_set
 
 Returns 1 if this Paginator has pages_per_set.  Otherwise returns undef.
@@ -307,20 +344,10 @@ Returns 1 if this Paginator has pages_per_set.  Otherwise returns undef.
 
 Returns the number of the last entry on the current page.
 
-=head2 last_set
-
-Returns the number of the last set if this Paginator has pages_per_set.
-Otherwise returns undef.
-
-
 =head2 next_page
 
 Returns the page number of the next page if one exists, otherwise returns
 false.
-
-=head2 next_set
-
-Returns the number of the next set or undefined if there is no next.
 
 =head2 page_for ($count)
 
@@ -332,40 +359,30 @@ $count is outside the bounds of this Paginator.
 Returns the page number of the previous page if one exists, otherwise returns
 undef.
 
-=head2 previous_set
-
-Returns the set number of the previous set or undefined if there is no
-previous set.
-
 =head2 set_for $page
 
 Returns the set number of the specified page.  Returns undef if the page
 exceeds the bounds of the Paginator.
 
-=head2 skip
-
-This method is useful paging through data in a database using SQL LIMIT
-clauses. It is simply $page->first - 1:
-
 =head2 splice
 
-Takes in an arrayref and returns only the valies which are on the current
+Takes in an arrayref and returns only the values which are on the current
 page.
-
-=head1 AUTHOR
-
-Cory G Watson, C<< <gphat at cpan.org> >>
 
 =head1 ACKNOWLEDGEMENTS
 
 Léon Brocard and his work on L<Data::Page>.
 
-=head1 COPYRIGHT & LICENSE
+=head1 AUTHOR
 
-Copyright 2009 Cory G Watson.
+Cory G Watson <gphat@cpan.org>
 
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
+=head1 COPYRIGHT AND LICENSE
 
-See http://dev.perl.org/licenses/ for more information.
+This software is copyright (c) 2011 by Cory G Watson.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
