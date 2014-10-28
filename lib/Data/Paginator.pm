@@ -1,7 +1,5 @@
 package Data::Paginator;
-{
-  $Data::Paginator::VERSION = '0.05';
-}
+$Data::Paginator::VERSION = '0.06';
 use Moose;
 
 # ABSTRACT: Pagination with Moose
@@ -241,7 +239,9 @@ sub splice {
 
 
 1;
+
 __END__
+
 =pod
 
 =head1 NAME
@@ -250,7 +250,7 @@ Data::Paginator - Pagination with Moose
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 SYNOPSIS
 
@@ -379,10 +379,9 @@ Cory G Watson <gphat@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Cory G Watson.
+This software is copyright (c) 2014 by Cory G Watson.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
