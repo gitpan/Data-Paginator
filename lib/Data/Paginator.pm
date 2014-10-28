@@ -1,5 +1,5 @@
 package Data::Paginator;
-$Data::Paginator::VERSION = '0.06';
+$Data::Paginator::VERSION = '0.07';
 use Moose;
 
 # ABSTRACT: Pagination with Moose
@@ -244,13 +244,15 @@ __END__
 
 =pod
 
+=encoding utf8
+
 =head1 NAME
 
 Data::Paginator - Pagination with Moose
 
 =head1 VERSION
 
-version 0.06
+version 0.07
 
 =head1 SYNOPSIS
 
