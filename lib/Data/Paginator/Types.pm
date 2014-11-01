@@ -1,5 +1,5 @@
 package Data::Paginator::Types;
-$Data::Paginator::Types::VERSION = '0.07';
+$Data::Paginator::Types::VERSION = '0.08';
 use MooseX::Types -declare => [qw(
     PositiveInt
 )];
@@ -19,7 +19,7 @@ __END__
 
 =pod
 
-=encoding utf8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -27,7 +27,7 @@ Data::Paginator::Types - Defines types used by Data::Paginator
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 AUTHOR
 
